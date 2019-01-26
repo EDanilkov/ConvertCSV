@@ -9,18 +9,13 @@ namespace ConvertCSV.Helpers
 {
     class ExcelWriter
     {
-        public static void WriteExcel(string fileName)
+        public static void WriteExcel(DBRepository DBRepository, string fileName, List<Person> persons)
         {
             Microsoft.Office.Interop.Excel.Application excelApp = new Microsoft.Office.Interop.Excel.Application();
             Microsoft.Office.Interop.Excel.Workbook workBook;
             Microsoft.Office.Interop.Excel.Worksheet workSheet;
             excelApp.SheetsInNewWorkbook = 3;
-
-            List<Person> persons = DBRepository.GetPerson().ToList();
-
             
-            //persons.Where(c => DBRepository.GetCountry(c.CityId).Name == )
-
             workBook = excelApp.Workbooks.Add();
             workSheet = (Microsoft.Office.Interop.Excel.Worksheet)workBook.Worksheets.get_Item(1);
             workSheet.Name = "Данные с CSV";
@@ -34,21 +29,18 @@ namespace ConvertCSV.Helpers
             int i = 2;
             foreach(Person person in persons)
             {
+                City city = DBRepository.GetCity(person.CityId);
                 workSheet.Cells[i, 1] = person.Date.ToString();
                 workSheet.Cells[i, 2] = person.Name;
                 workSheet.Cells[i, 3] = person.Surname;
                 workSheet.Cells[i, 4] = person.Patronymic;
-                workSheet.Cells[i, 5] = DBRepository.GetCity(person.CityId).Name;
-                workSheet.Cells[i++, 6] = DBRepository.GetCountry(DBRepository.GetCity(person.CityId).CountryId).Name;
+                workSheet.Cells[i, 5] = city.Name;
+                workSheet.Cells[i++, 6] = DBRepository.GetCountry(city.CountryId).Name;
             }
 
 
             workBook.SaveAs(fileName);
             excelApp.Quit();
-
-
-
-            
         }
     }
 }

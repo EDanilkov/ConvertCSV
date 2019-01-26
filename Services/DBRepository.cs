@@ -13,69 +13,72 @@ namespace ConvertCSV.Services
 {
     class DBRepository
     {
-        public static StarterTaskDbContext db = new StarterTaskDbContext();
+        public StarterTaskDbContext db = new StarterTaskDbContext();
 
-        public static StarterTaskDbContext GetDataBase()
+        public StarterTaskDbContext GetDataBase()
         {
             return db;
         }
 
-        public static List<Person> GetPerson()
+        public List<Person> GetPerson()
         {
             return db.Person.ToList();
         }
 
-        public static List<City> GetCity()
+        public List<City> GetCity()
         {
             return db.City.ToList();
         }
 
-        public static List<Country> GetCountry()
+        public List<Country> GetCountry()
         {
             return db.Country.ToList();
         }
 
-        public static int GetCountryId(string name)
+        public int GetCountryId(string name)
         {
             return db.Country.ToList().Where(c => string.Equals(c.Name, name)).First().Id;
         }
 
-        public static int GetCityId(string name)
+        public int GetCityId(string name)
         {
             return db.City.ToList().Where(c => string.Equals(c.Name, name)).First().Id;
         }
 
-        public static City GetCity(int id)
+        public City GetCity(int id)
         {
             return db.City.ToList().Where(c => c.Id == id).First();
         }
 
-        public static City GetCity(string name)
+        public City GetCity(string name)
         {
             return db.City.ToList().Where(c => string.Equals(c.Name, name)).First();
         }
 
-        public static List<City> GetCitiesFromCountry(string countryName)
+        public  List<City> GetCitiesFromCountry(string countryName)
         {            
             return GetCity().Where(c => string.Equals(c.Country.Name, countryName)).ToList();
         }
 
-        public static Country GetCountry(int id)
+        public  Country GetCountry(int id)
         {
             return db.Country.ToList().Where(c => c.Id == id).First();
         }
 
-        public static Country GetCountry(string cityName)
+        public  Country GetCountry(string cityName)
         {
             return GetCity(cityName).Country;
         }
 
-        public static void LoadCSV(string Path, ProgressBar progressBar)
+        public  void LoadCSV(string Path, ProgressBar progressBar)
         {
             string[] temp = File.ReadAllLines(Path, System.Text.Encoding.Default);
             Application.Current.Dispatcher.BeginInvoke(new ThreadStart(delegate
             {
-                progressBar.Maximum = temp.Count(); }));
+                progressBar.Maximum = temp.Count();
+            }));
+            List<Country> countries = GetCountry();
+            List<City> cities = GetCity();
             foreach (string s in temp)
             {
                 Application.Current.Dispatcher.BeginInvoke(new ThreadStart(delegate
