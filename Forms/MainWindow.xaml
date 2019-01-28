@@ -63,13 +63,13 @@
                     <ListViewItem Height="60" Selected="ShowCreateExcel">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Pencil" Height="25" Width="25" Margin="10"/>
-                            <TextBlock Text="Create Excel" VerticalAlignment="Center" Margin="20 10"/>
+                            <TextBlock Text="Create File" VerticalAlignment="Center" Margin="20 10"/>
                         </StackPanel>
                     </ListViewItem>
                     <ListViewItem Height="60" Selected="ShowDataGridView">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Table" Height="25" Width="25" Margin="10"/>
-                            <TextBlock Text="Show DataGrid" VerticalAlignment="Center"  Margin="20 10"/>
+                            <TextBlock Text="Show Data Table" VerticalAlignment="Center"  Margin="20 10"/>
                         </StackPanel>
                     </ListViewItem>
                 </ListView>
@@ -86,14 +86,14 @@
         
         <Grid Name="LoadCSV" Grid.Column="1" Grid.Row="0" Visibility="Collapsed">
             <StackPanel Orientation="Vertical">
-                <TextBlock FontSize="18" Margin="20 10" Foreground="Black" Text="Введите путь к файлу:"/>
+                <TextBlock FontSize="18" Margin="20 10" Foreground="Black" Text="Choose the path to the file:"/>
                 <StackPanel Orientation="Horizontal">
                     <TextBox Name="CSVPath" IsReadOnly="True" Foreground="Black" Margin="20 10" Width="450" HorizontalAlignment="Left" VerticalAlignment="Top" Background="White" />
                     <Button Click="ShowCSVPath_Click" Width="100" Height="30" >
-                        <TextBlock Text="Обзор"/>
+                        <TextBlock Text="Browse..."/>
                     </Button>
                     <Button Click="ButtonLoadCSV_Click" Margin="10" Width="100" Height="30" >
-                        <TextBlock Text="Загрузить"/>
+                        <TextBlock Text="Load"/>
                     </Button>
                 </StackPanel>
             </StackPanel>
@@ -102,21 +102,21 @@
         <Grid Name="CreateExcel"  Grid.Column="1" Grid.Row="0" Visibility="Collapsed">
 
             <StackPanel Orientation="Vertical">
-                <TextBlock FontSize="18" Margin="20 10 0 0" HorizontalAlignment="Left" Foreground="Black" Text="Выберите параметры сортировки" />
+                <TextBlock FontSize="18" Margin="20 10 0 0" HorizontalAlignment="Left" Foreground="Black" Text="Select collation" />
 
                 <StackPanel Orientation="Horizontal">
                     <StackPanel Orientation="Vertical" Width="300"  VerticalAlignment="Top" HorizontalAlignment="Left">
                         <StackPanel Orientation="Vertical" Margin="20 10 0 10">
                             <StackPanel  Orientation="Vertical">
-                                <TextBlock Text="Имя: " FontSize="18" VerticalAlignment="Center" Foreground="Black" />
+                                <TextBlock Text="Name: " FontSize="18" VerticalAlignment="Center" Foreground="Black" />
                                 <wpfTool:CheckComboBox HorizontalAlignment="Left" VerticalAlignment="Top" ItemSelectionChanged ="CheckBoxCountry_ItemSelectionChanged" Margin="0 0 0 5" MaxDropDownHeight ="60" Width="200" Height="30" Name="CheckBoxName"/>
-                                <TextBlock Text="Фамилия: " FontSize="18" VerticalAlignment="Center" Foreground="Black" />
+                                <TextBlock Text="Surname: " FontSize="18" VerticalAlignment="Center" Foreground="Black" />
                                 <wpfTool:CheckComboBox HorizontalAlignment="Left" VerticalAlignment="Top" ItemSelectionChanged ="CheckBoxCountry_ItemSelectionChanged"   Margin="0 0 0 5" MaxDropDownHeight ="60" Width="200" Height="30" Name="CheckBoxSurname"/>
-                                <TextBlock Text="Отчество: " FontSize="18" VerticalAlignment="Center" Foreground="Black" />
+                                <TextBlock Text="Patronymic: " FontSize="18" VerticalAlignment="Center" Foreground="Black" />
                                 <wpfTool:CheckComboBox HorizontalAlignment="Left" Margin="0 0 0 5" VerticalAlignment="Top" ItemSelectionChanged ="CheckBoxCountry_ItemSelectionChanged" MaxDropDownHeight ="60" Width="200" Height="30" Name="CheckBoxPatronymic"/>
-                                <TextBlock Text="Страны: " FontSize="18" VerticalAlignment="Center" Foreground="Black" />
+                                <TextBlock Text="Country: " FontSize="18" VerticalAlignment="Center" Foreground="Black" />
                                 <wpfTool:CheckComboBox HorizontalAlignment="Left" Margin="0 0 0 5" VerticalAlignment="Top" ItemSelectionChanged ="CheckBoxCountry_ItemSelectionChanged" MaxDropDownHeight ="60" Width="200" Height="30" Name="CheckBoxCountry"/>
-                                <TextBlock Text="Города: "  FontSize="18" VerticalAlignment="Center" Foreground="Black" />
+                                <TextBlock Text="City: "  FontSize="18" VerticalAlignment="Center" Foreground="Black" />
                                 <wpfTool:CheckComboBox HorizontalAlignment="Left" Margin="0 0 0 5" VerticalAlignment="Top" IsEnabled="False" MaxDropDownHeight ="60" Width="200" Height="30" Name="CheckBoxCity"/>
                             </StackPanel>
                         </StackPanel>
@@ -125,44 +125,44 @@
                     <StackPanel Orientation="Vertical">
                         <DataGrid Margin="10 10 0 0" IsReadOnly="True" MaxHeight="300" Name="DataGridPreview" Foreground="Black" AutoGenerateColumns="False" HorizontalGridLinesBrush="DarkGray">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Дата" Binding="{Binding Path=Date}" Width="90" />
-                                <DataGridTextColumn Header="Имя" Binding="{Binding Path=Name}" Width="80" />
-                                <DataGridTextColumn Header="Фамилия" Binding="{Binding Path=Surname}" Width="100" />
-                                <DataGridTextColumn Header="Отчество" Binding="{Binding Path=Patronymic}" Width="100" />
-                                <DataGridTextColumn Header="Город" Binding="{Binding Path=CityName}" Width="120" />
-                                <DataGridTextColumn Header="Страна" Binding="{Binding Path=CountryName}" Width="120" />
+                                <DataGridTextColumn Header="Date" Binding="{Binding Path=Date}" MinWidth="90" />
+                                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}" MinWidth="80" />
+                                <DataGridTextColumn Header="Surname" Binding="{Binding Path=Surname}" MinWidth="100" />
+                                <DataGridTextColumn Header="Patronymic" Binding="{Binding Path=Patronymic}" MinWidth="100" />
+                                <DataGridTextColumn Header="City" Binding="{Binding Path=CityName}" MinWidth="120" />
+                                <DataGridTextColumn Header="Country" Binding="{Binding Path=CountryName}" MinWidth="120" />
                             </DataGrid.Columns>
                         </DataGrid>
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Width="500" Height="150" HorizontalAlignment="Left" Margin="20 10 0 10">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Width="40"  Text="C " FontSize="16" VerticalAlignment="Bottom" Foreground="Black"/>
+                        <TextBlock Width="80" Text="From date:" FontSize="16" VerticalAlignment="Bottom" Foreground="Black"/>
                         <DatePicker Name="DateFromSearch" Width="400" SelectedDateChanged="DatePicker_SelectedDateFromChanged" HorizontalAlignment="Right" Margin="5" Foreground="Black" Height="25" VerticalAlignment="Center" SelectedDateFormat="Short" />
                     </StackPanel>
                     <StackPanel Margin="0 20 0 0" Orientation="Horizontal">
-                        <TextBlock Width="40"  Text="По " FontSize="16" VerticalAlignment="Bottom" Foreground="Black"/>
+                        <TextBlock Width="80"  Text="To date:" FontSize="16" VerticalAlignment="Bottom" Foreground="Black"/>
                         <DatePicker Name="DateToSearch" Width="400" SelectedDateChanged="DatePicker_SelectedDateToChanged" HorizontalAlignment="Right" Margin="5" Foreground="Black" Height="25" VerticalAlignment="Center" SelectedDateFormat="Short" />
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
                 <Button Click="ButtonShowDataGridPreview_Click" Margin="15" Width="100" Height="30" >
-                    <TextBlock Text="Просмотр"/>
+                    <TextBlock Text="View"/>
                 </Button>
                 <Button Click="ButtonSaveExcel_Click" Margin="15" Width="100" Height="30" >
-                    <TextBlock Text="Сохранить"/>
+                    <TextBlock Text="Save"/>
                 </Button>
             </StackPanel>
         </Grid>
 
         <Grid Name="Settings" Grid.Column="1" Grid.Row="0" Visibility="Collapsed">
             <StackPanel Orientation="Vertical">
-                <TextBlock HorizontalAlignment="Center" Text="Настройки" FontSize="24" Foreground="Black"/>
+                <TextBlock HorizontalAlignment="Center" Text="Settings" FontSize="24" Foreground="Black"/>
                 <StackPanel Margin="10" Orientation="Horizontal">
-                    <TextBlock VerticalAlignment="Center" Foreground="Black" FontSize="18" Text="Очистить базу данных"/>
+                    <TextBlock VerticalAlignment="Center" Foreground="Black" FontSize="18" Text="To clear the database"/>
                     <Button Margin="10 0 0 0 " Click="ClearDB">
-                        <TextBlock Text="Выполнить"/>
+                        <TextBlock Text="Apply"/>
                     </Button>
                 </StackPanel>
             </StackPanel>
@@ -170,14 +170,14 @@
 
         <Grid Name="DataGridView"  Grid.Column="1" Grid.Row="0" Visibility="Collapsed">
             <StackPanel Orientation="Vertical">
-                <DataGrid  MaxHeight="540" IsReadOnly="True" Name="DataGrid" Foreground="Black" AutoGenerateColumns="False" HorizontalGridLinesBrush="DarkGray" RowBackground="LightGray" AlternatingRowBackground="White">
+                <DataGrid   IsReadOnly="True" Name="DataGrid" Foreground="Black" AutoGenerateColumns="False" HorizontalGridLinesBrush="DarkGray" RowBackground="LightGray" AlternatingRowBackground="White">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Дата" Binding="{Binding Path=Date}" Width="80" />
-                        <DataGridTextColumn Header="Имя" Binding="{Binding Path=Name}" Width="80" />
-                        <DataGridTextColumn Header="Фамилия" Binding="{Binding Path=Surname}" Width="100" />
-                        <DataGridTextColumn Header="Отчество" Binding="{Binding Path=Patronymic}" Width="100" />
-                        <DataGridTextColumn Header="Город" Binding="{Binding Path=CityName}" Width="120" />
-                        <DataGridTextColumn Header="Страна" Binding="{Binding Path=CountryName}" Width="120" />
+                        <DataGridTextColumn Header="Дата" Binding="{Binding Path=Date}" MinWidth="80" />
+                        <DataGridTextColumn Header="Имя" Binding="{Binding Path=Name}" MinWidth="80" />
+                        <DataGridTextColumn Header="Фамилия" Binding="{Binding Path=Surname}" MinWidth="100" />
+                        <DataGridTextColumn Header="Отчество" Binding="{Binding Path=Patronymic}" MinWidth="100" />
+                        <DataGridTextColumn Header="Город" Binding="{Binding Path=CityName}" MinWidth="120" />
+                        <DataGridTextColumn Header="Страна" Binding="{Binding Path=CountryName}" MinWidth="120" />
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>

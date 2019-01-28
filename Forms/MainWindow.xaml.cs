@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -45,52 +47,60 @@ namespace ConvertCSV
 
         private void ShowCreateExcel(object sender, RoutedEventArgs e)
         {
-            ListViewSettings.UnselectAll();
-            Settings.Visibility = Visibility.Collapsed;
-            LoadCSV.Visibility = Visibility.Collapsed;
-            DataGridView.Visibility = Visibility.Collapsed;
-            CreateExcel.Visibility = Visibility.Visible;
-            List<Person> persons = DBRepository.GetPerson().ToList();
-            List<City> cities = DBRepository.GetCity().ToList();
-            List<Country> countries = DBRepository.GetCountry().ToList();
-            List<string> personNames = new List<string>();
-            List<string> personSurnames = new List<string>();
-            List<string> personPatronymices = new List<string>();
-            List<string> cityNames = new List<string>();
-            List<string> countryNames = new List<string>();
-
-            foreach (Person person in persons)
+            try
             {
-                personNames.Add(person.Name);
-                personSurnames.Add(person.Surname);
-                personPatronymices.Add(person.Patronymic);
-            }
+                ListViewSettings.UnselectAll();
+                Settings.Visibility = Visibility.Collapsed;
+                LoadCSV.Visibility = Visibility.Collapsed;
+                DataGridView.Visibility = Visibility.Collapsed;
+                CreateExcel.Visibility = Visibility.Visible;
+                List<Person> persons = DBRepository.GetPerson().ToList();
+                List<City> cities = DBRepository.GetCity().ToList();
+                List<Country> countries = DBRepository.GetCountry().ToList();
+                List<string> personNames = new List<string>();
+                List<string> personSurnames = new List<string>();
+                List<string> personPatronymices = new List<string>();
+                List<string> cityNames = new List<string>();
+                List<string> countryNames = new List<string>();
 
-            foreach(City city in cities)
+                foreach (Person person in persons)
+                {
+                    personNames.Add(person.Name);
+                    personSurnames.Add(person.Surname);
+                    personPatronymices.Add(person.Patronymic);
+                }
+
+                foreach (City city in cities)
+                {
+                    cityNames.Add(city.Name);
+                }
+
+                foreach (Country country in countries)
+                {
+                    countryNames.Add(country.Name);
+                }
+                personNames = personNames.Distinct().ToList();
+                personSurnames = personSurnames.Distinct().ToList();
+                personPatronymices = personPatronymices.Distinct().ToList();
+
+                CheckBoxCountry.UnSelectAll();
+                CheckBoxCity.UnSelectAll();
+                CheckBoxName.UnSelectAll();
+                CheckBoxSurname.UnSelectAll();
+                CheckBoxPatronymic.UnSelectAll();
+                CheckBoxCountry.ItemsSource = countryNames;
+                CheckBoxCity.ItemsSource = cityNames;
+                CheckBoxName.ItemsSource = personNames;
+                CheckBoxSurname.ItemsSource = personSurnames;
+                CheckBoxPatronymic.ItemsSource = personPatronymices;
+                DateFromSearch.Text = null;
+                DateToSearch.Text = null;
+            }
+            catch
             {
-                cityNames.Add(city.Name);
+                Change_LabelInfo("Page load error!", "#FFDE5454");
             }
-
-            foreach (Country country in countries)
-            {
-                countryNames.Add(country.Name);
-            }
-            personNames = personNames.Distinct().ToList();
-            personSurnames = personSurnames.Distinct().ToList();
-            personPatronymices = personPatronymices.Distinct().ToList();
-
-            CheckBoxCountry.UnSelectAll();
-            CheckBoxCity.UnSelectAll();
-            CheckBoxName.UnSelectAll();
-            CheckBoxSurname.UnSelectAll();
-            CheckBoxPatronymic.UnSelectAll();
-            CheckBoxCountry.ItemsSource = countryNames;
-            CheckBoxCity.ItemsSource = cityNames;
-            CheckBoxName.ItemsSource = personNames;
-            CheckBoxSurname.ItemsSource = personSurnames;
-            CheckBoxPatronymic.ItemsSource = personPatronymices;
-            DateFromSearch.Text = null;
-            DateToSearch.Text = null;
+            
         }
 
         private void ShowLoadCSV(object sender, RoutedEventArgs e)
@@ -113,7 +123,6 @@ namespace ConvertCSV
 
         private void ButtonLoadCSV_Click(object sender, RoutedEventArgs e)
         {
-            //DBRepository.LoadCSV(CSVPath.Text);
             ProgressBar.Visibility = Visibility.Visible;
             ProgressBar.Value = 0;
             LoadCSVAsync(CSVPath.Text, ProgressBar);
@@ -125,30 +134,38 @@ namespace ConvertCSV
             {
                 DBRepository DB = new DBRepository();
                 await Task.Run(() => DB.LoadCSV(path, progressBar));
-                Change_LabelInfo("Файлы успешно загружены !", "#FF76D353");
+                Change_LabelInfo("Files successfully uploaded !", "#FF76D353");
             }
-            catch                                                              //ЭТО НУЖНО ????
+            catch                                                              
             {
-                Change_LabelInfo("Ошибка загрузки файлов !", "#FFDE5454");
+                Change_LabelInfo("File upload error !", "#FFDE5454");
             }
         }
 
         private void ShowDataGridView(object sender, RoutedEventArgs e)
         {
-            ListViewSettings.UnselectAll();
-            List<Person> persons = DBRepository.GetPerson();
-            List<ModelForDataGrid> modelesForDataGrid = new List<ModelForDataGrid>();
-            foreach (Person person in persons)
+            try
             {
-                City city = DBRepository.GetCity(person.CityId);
-                modelesForDataGrid.Add(new ModelForDataGrid(person.Date, person.Name, person.Surname, person.Patronymic, city.Name, DBRepository.GetCountry(city.CountryId).Name));
+                ListViewSettings.UnselectAll();
+                List<Person> persons = DBRepository.GetPerson();
+                List<ModelForDataGrid> modelesForDataGrid = new List<ModelForDataGrid>();
+                foreach (Person person in persons)
+                {
+                    City city = DBRepository.GetCity(person.CityId);
+                    modelesForDataGrid.Add(new ModelForDataGrid(person.Date, person.Name, person.Surname, person.Patronymic, city.Name, DBRepository.GetCountry(city.CountryId).Name));
+                }
+                Settings.Visibility = Visibility.Collapsed;
+                LoadCSV.Visibility = Visibility.Collapsed;
+                CreateExcel.Visibility = Visibility.Collapsed;
+                DataGrid.ItemsSource = modelesForDataGrid;
+                DataGridView.Visibility = Visibility.Visible;
             }
-            Settings.Visibility = Visibility.Collapsed;
-            LoadCSV.Visibility = Visibility.Collapsed;
-            CreateExcel.Visibility = Visibility.Collapsed;
-            DataGrid.ItemsSource = modelesForDataGrid;
-            DataGridView.Visibility = Visibility.Visible;
-           
+            catch
+            {
+                Change_LabelInfo("Error loading table !", "#FFDE5454");
+            }
+            
+
         }
 
         private void ShowCSVPath_Click(object sender, RoutedEventArgs e)
@@ -185,47 +202,55 @@ namespace ConvertCSV
 
         private void ButtonSaveExcel_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog saveFile = new SaveFileDialog();
-            saveFile.Filter = "(*.xlsx)|*.xlsx|(*.xml)|*.xml";
-            saveFile.OverwritePrompt = false;
-            List<string> countryName = new List<string>();
-            List<string> personName = new List<string>();
-            List<string> personSurname = new List<string>();
-            List<string> personPatronymic = new List<string>();
-            List<string> cityName = new List<string>();
+            try
+            {
+                SaveFileDialog saveFile = new SaveFileDialog();
+                saveFile.Filter = "(*.xlsx)|*.xlsx|(*.xml)|*.xml";
+                saveFile.OverwritePrompt = false;
+                List<string> countryName = new List<string>();
+                List<string> personName = new List<string>();
+                List<string> personSurname = new List<string>();
+                List<string> personPatronymic = new List<string>();
+                List<string> cityName = new List<string>();
 
-            foreach (string c in CheckBoxName.SelectedItems)
-            {
-                personName.Add(c);
-            }
-            foreach (string c in CheckBoxSurname.SelectedItems)
-            {
-                personSurname.Add(c);
-            }
-            foreach (string c in CheckBoxPatronymic.SelectedItems)
-            {
-                personPatronymic.Add(c);
-            }
-            foreach (string c in CheckBoxCity.SelectedItems)
-            {
-                cityName.Add(c);
-            }
-            foreach (string c in CheckBoxCountry.SelectedItems)
-            {
-                countryName.Add(c);
-            }
-            if (saveFile.ShowDialog() == true)
-            {
-                if(saveFile.FilterIndex == 1)
+                foreach (string c in CheckBoxName.SelectedItems)
                 {
-                    ExcelWriter.WriteExcel(DBRepository, saveFile.FileName, SelectionPerson(personName, personSurname, personPatronymic, cityName, countryName, DateFromSearch.Text, DateToSearch.Text));
+                    personName.Add(c);
                 }
-                else
+                foreach (string c in CheckBoxSurname.SelectedItems)
                 {
-                    XmlWriter.WriteXML(DBRepository, saveFile.FileName, SelectionPerson(personName, personSurname, personPatronymic, cityName, countryName, DateFromSearch.Text, DateToSearch.Text));
+                    personSurname.Add(c);
                 }
+                foreach (string c in CheckBoxPatronymic.SelectedItems)
+                {
+                    personPatronymic.Add(c);
+                }
+                foreach (string c in CheckBoxCity.SelectedItems)
+                {
+                    cityName.Add(c);
+                }
+                foreach (string c in CheckBoxCountry.SelectedItems)
+                {
+                    countryName.Add(c);
+                }
+                if (saveFile.ShowDialog() == true)
+                {
+                    if (saveFile.FilterIndex == 1)
+                    {
+                        ExcelWriter.WriteExcel(DBRepository, saveFile.FileName, SelectionPerson(personName, personSurname, personPatronymic, cityName, countryName, DateFromSearch.Text, DateToSearch.Text));
+                    }
+                    else
+                    {
+                        XmlWriter.WriteXML(DBRepository, saveFile.FileName, SelectionPerson(personName, personSurname, personPatronymic, cityName, countryName, DateFromSearch.Text, DateToSearch.Text));
+                    }
+                }
+                Change_LabelInfo("The file is saved !", "#FF76D353");
             }
-            Change_LabelInfo("Файл успешно сохранён !", "#FF76D353");
+            catch
+            {
+                Change_LabelInfo("Error writing to file !", "#FFDE5454");
+            }
+                
         }
 
         private void Change_LabelInfo(string info, string colorHEX)
@@ -277,42 +302,50 @@ namespace ConvertCSV
 
         private void ButtonShowDataGridPreview_Click(object sender, RoutedEventArgs e)
         {
-            List<Person> persons = DBRepository.GetPerson().ToList();
-            List<string> countryName = new List<string>();
-            List<string> personName = new List<string>();
-            List<string> personSurname = new List<string>();
-            List<string> personPatronymic = new List<string>();
-            List<string> cityName = new List<string>();
+            try
+            {
+                List<Person> persons = DBRepository.GetPerson().ToList();
+                List<string> countryName = new List<string>();
+                List<string> personName = new List<string>();
+                List<string> personSurname = new List<string>();
+                List<string> personPatronymic = new List<string>();
+                List<string> cityName = new List<string>();
 
-            foreach (string c in CheckBoxName.SelectedItems)
-            {
-                personName.Add(c);
+                foreach (string c in CheckBoxName.SelectedItems)
+                {
+                    personName.Add(c);
+                }
+                foreach (string c in CheckBoxSurname.SelectedItems)
+                {
+                    personSurname.Add(c);
+                }
+                foreach (string c in CheckBoxPatronymic.SelectedItems)
+                {
+                    personPatronymic.Add(c);
+                }
+                foreach (string c in CheckBoxCity.SelectedItems)
+                {
+                    cityName.Add(c);
+                }
+                foreach (string c in CheckBoxCountry.SelectedItems)
+                {
+                    countryName.Add(c);
+                }
+                persons = SelectionPerson(personName, personSurname, personPatronymic, cityName, countryName, DateFromSearch.ToString(), DateToSearch.ToString());
+
+                List<ModelForDataGrid> modelesForDataGrid = new List<ModelForDataGrid>();
+                foreach (Person person in persons)
+                {
+                    City city = DBRepository.GetCity(person.CityId);
+                    modelesForDataGrid.Add(new ModelForDataGrid(person.Date, person.Name, person.Surname, person.Patronymic, city.Name, DBRepository.GetCountry(city.CountryId).Name));
+                }
+                DataGridPreview.ItemsSource = modelesForDataGrid;
             }
-            foreach (string c in CheckBoxSurname.SelectedItems)
+            catch
             {
-                personSurname.Add(c);
+                Change_LabelInfo("Error loading table !", "#FFDE5454");
             }
-            foreach (string c in CheckBoxPatronymic.SelectedItems)
-            {
-                personPatronymic.Add(c);
-            }
-            foreach (string c in CheckBoxCity.SelectedItems)
-            {
-                cityName.Add(c);
-            }
-            foreach (string c in CheckBoxCountry.SelectedItems)
-            {
-                countryName.Add(c);
-            }
-            persons = SelectionPerson(personName, personSurname, personPatronymic, cityName, countryName, DateFromSearch.ToString(), DateToSearch.ToString());
             
-            List<ModelForDataGrid> modelesForDataGrid = new List<ModelForDataGrid>();
-            foreach (Person person in persons)
-            {
-                City city = DBRepository.GetCity(person.CityId);
-                modelesForDataGrid.Add(new ModelForDataGrid(person.Date, person.Name, person.Surname, person.Patronymic, city.Name, DBRepository.GetCountry(city.CountryId).Name));
-            }
-            DataGridPreview.ItemsSource = modelesForDataGrid;
         }
 
         private void ClearDB(object sender, RoutedEventArgs e)
@@ -345,11 +378,11 @@ namespace ConvertCSV
                     context.City.Remove(p);
                     context.SaveChanges();
                 }
-                Change_LabelInfo("База данных успешно очищена !", "#FF76D353");
+                Change_LabelInfo("Database successfully cleaned !", "#FF76D353");
             }
-            catch                                                              //ЭТО НУЖНО ????
+            catch                                                             
             {
-                Change_LabelInfo("Ошибка очистки базы данных !", "#FFDE5454");
+                Change_LabelInfo("Database cleanup error !", "#FFDE5454");
             }
             
         }
