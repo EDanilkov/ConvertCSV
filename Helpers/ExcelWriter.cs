@@ -1,15 +1,12 @@
-﻿using ConvertCSV.Services;
-using System;
+﻿using ConvertCSV.Models;
+using ConvertCSV.Services;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConvertCSV.Helpers
 {
     class ExcelWriter
     {
-        public static void WriteExcel(DBRepository DBRepository, string fileName, List<Person> persons)
+        public static async void WriteExcel(DBRepository DBRepository, string fileName, List<Person> persons)
         {
             Microsoft.Office.Interop.Excel.Application excelApp = new Microsoft.Office.Interop.Excel.Application();
             Microsoft.Office.Interop.Excel.Workbook workBook;
@@ -29,13 +26,13 @@ namespace ConvertCSV.Helpers
             int i = 2;
             foreach(Person person in persons)
             {
-                City city = DBRepository.GetCity(person.CityId);
+                City city = await DBRepository.GetCity(person.CityId);
                 workSheet.Cells[i, 1] = person.Date.ToString();
                 workSheet.Cells[i, 2] = person.Name;
                 workSheet.Cells[i, 3] = person.Surname;
                 workSheet.Cells[i, 4] = person.Patronymic;
                 workSheet.Cells[i, 5] = city.Name;
-                workSheet.Cells[i++, 6] = DBRepository.GetCountry(city.CountryId).Name;
+                workSheet.Cells[i++, 6] = (await DBRepository.GetCountry(city.CountryId)).Name;
             }
 
 

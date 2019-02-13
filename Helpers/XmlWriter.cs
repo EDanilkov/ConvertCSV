@@ -1,16 +1,15 @@
-﻿using ConvertCSV.Services;
-using System;
+﻿using ConvertCSV.Models;
+using ConvertCSV.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace ConvertCSV.Helpers
 {
     class XmlWriter
     {
-        public static void WriteXML(DBRepository DBRepository, string fileName, List<Person> persons) 
+        public static async void WriteXML(DBRepository DBRepository, string fileName, List<Person> persons) 
         {
             int n = persons.Count();
 
@@ -18,7 +17,7 @@ namespace ConvertCSV.Helpers
             writer.WriteStartElement("TestProgram");
             for(int i = 0; i < n; i++)
             {
-                City city = DBRepository.GetCity(persons[i].CityId);
+                City city = await DBRepository.GetCity(persons[i].CityId);
                 writer.WriteStartElement("Record");
                 writer.WriteAttributeString("id", (i + 1).ToString());
                 writer.WriteStartElement("Date");
@@ -37,7 +36,7 @@ namespace ConvertCSV.Helpers
                 writer.WriteString(city.Name);
                 writer.WriteEndElement();
                 writer.WriteStartElement("Country");
-                writer.WriteString(DBRepository.GetCountry(city.CountryId).Name);
+                writer.WriteString((await DBRepository.GetCountry(city.CountryId)).Name);
                 writer.WriteEndElement();
                 writer.WriteEndElement();
             }

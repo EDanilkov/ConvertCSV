@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ConvertCSV
+namespace ConvertCSV.Models
 {
     using System;
     using System.Data.Entity;

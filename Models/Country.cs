@@ -7,25 +7,23 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ConvertCSV
+namespace ConvertCSV.Models
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class City
+    public partial class Country
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public City()
+        public Country()
         {
-            this.Person = new HashSet<Person>();
+            this.City = new HashSet<City>();
         }
     
         public int Id { get; set; }
         public string Name { get; set; }
-        public int CountryId { get; set; }
     
-        public virtual Country Country { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Person> Person { get; set; }
+        public virtual ICollection<City> City { get; set; }
     }
 }
