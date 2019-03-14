@@ -35,6 +35,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Dragablz, Version=0.0.3.203, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Dragablz.0.0.3.203\lib\net45\Dragablz.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
@@ -106,35 +110,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Models\City.cs">
-      <DependentUpon>DbStarterTask.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Country.cs">
-      <DependentUpon>DbStarterTask.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\DbStarterTask.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DbStarterTask.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\DbStarterTask.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DbStarterTask.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\DbStarterTask.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DbStarterTask.edmx</DependentUpon>
-    </Compile>
     <Compile Include="Helpers\CsvReader.cs" />
     <Compile Include="Helpers\ExcelWriter.cs" />
     <Compile Include="Helpers\XmlWriter.cs" />
-    <Compile Include="Models\ModelForDataGrid.cs" />
-    <Compile Include="Models\Person.cs">
-      <DependentUpon>DbStarterTask.tt</DependentUpon>
-    </Compile>
+    <Compile Include="Models\City.cs" />
+    <Compile Include="Models\Country.cs" />
+    <Compile Include="Models\Person.cs" />
+    <Compile Include="Models\RecordViewModel.cs" />
+    <Compile Include="Models\StarterTaskDbContext.cs" />
     <Compile Include="Services\DBRepository.cs" />
+    <Compile Include="ViewModels\DelegateCommand.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
     <Page Include="Forms\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -166,13 +152,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EntityDeploy Include="Models\DbStarterTask.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>DbStarterTask.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="Models\DbStarterTask.edmx.diagram">
-      <DependentUpon>DbStarterTask.edmx</DependentUpon>
-    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -188,18 +167,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="Models\DbStarterTask.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DbStarterTask.edmx</DependentUpon>
-      <LastGenOutput>DbStarterTask.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\DbStarterTask.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DbStarterTask.edmx</DependentUpon>
-      <LastGenOutput>DbStarterTask.cs</LastGenOutput>
-    </Content>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

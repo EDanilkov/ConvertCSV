@@ -23,27 +23,23 @@ namespace ConvertCSV
 
         DBRepository DBRepository = new DBRepository();
 
-        private void ButtonOpenMenu_Click(object sender, RoutedEventArgs e)
-        {
-            ButtonCloseMenu.Visibility = Visibility.Visible;
-            ButtonOpenMenu.Visibility = Visibility.Collapsed;
-        }
-
-        private void ButtonCloseMenu_Click(object sender, RoutedEventArgs e)
-        {
-            ButtonCloseMenu.Visibility = Visibility.Collapsed;
-            ButtonOpenMenu.Visibility = Visibility.Visible;
-        }
-
-        private void ShowCreateExcel(object sender, RoutedEventArgs e)
+       /* private async void ShowCreateExcel(object sender, RoutedEventArgs e)
         {
             try
             {
+                await Task.Run(() => LoadDataAsync());
+            }
+            catch
+            {
+                Change_LabelInfo("Page load error!", "#FFDE5454");
+            }
+        }*/
+
+        private async void LoadDataAsync()  //Вызов асинхронного метода LoadData, для загрузки данных в фильтры
+        {
+            await Application.Current.Dispatcher.BeginInvoke(new ThreadStart(delegate
+            {
                 LockInterface.Visibility = Visibility.Visible;
-                ListViewSettings.UnselectAll();
-                Settings.Visibility = Visibility.Collapsed;
-                LoadCSV.Visibility = Visibility.Collapsed;
-                DataGridView.Visibility = Visibility.Collapsed;
                 CheckBoxCountry.UnSelectAll();
                 CheckBoxCity.UnSelectAll();
                 CheckBoxName.UnSelectAll();
@@ -51,28 +47,11 @@ namespace ConvertCSV
                 CheckBoxPatronymic.UnSelectAll();
                 DateFromSearch.Text = null;
                 DateToSearch.Text = null;
-                LoadDataAsync();
-            }
-            catch
-            {
-                Change_LabelInfo("Page load error!", "#FFDE5454");
-            }
-        }
-
-        private async void LoadDataAsync()  //Вызов асинхронного метода LoadData, для загрузки данных в фильтры
-        {
-            Spinner.Visibility = Visibility.Visible;
-            await Task.Run(() => LoadData());
-            Spinner.Visibility = Visibility.Collapsed;
-            CreateExcel.Visibility = Visibility.Visible;
-            LockInterface.Visibility = Visibility.Collapsed;
-        }
-
-        private void LoadData()
-        {
-            List<Person> persons = DBRepository.GetPerson().Result.ToList();
-            List<City> cities = DBRepository.GetCity().Result.ToList();
-            List<Country> countries =  DBRepository.GetCountry().Result.ToList();
+                Spinner.Visibility = Visibility.Visible;
+            }));
+            List<Person> persons = (await DBRepository.GetPerson()).ToList();
+            List<City> cities = (await DBRepository.GetCity()).ToList();
+            List<Country> countries = (await DBRepository.GetCountry()).ToList();
             List<string> personNames = new List<string>();
             List<string> personSurnames = new List<string>();
             List<string> personPatronymices = new List<string>();
@@ -98,36 +77,19 @@ namespace ConvertCSV
             personNames = personNames.Distinct().ToList();
             personSurnames = personSurnames.Distinct().ToList();
             personPatronymices = personPatronymices.Distinct().ToList();
-            Application.Current.Dispatcher.BeginInvoke(new ThreadStart(delegate
+            await Application.Current.Dispatcher.BeginInvoke(new ThreadStart(delegate
             {
                 CheckBoxCountry.ItemsSource = countryNames;
                 CheckBoxCity.ItemsSource = cityNames;
                 CheckBoxName.ItemsSource = personNames;
                 CheckBoxSurname.ItemsSource = personSurnames;
                 CheckBoxPatronymic.ItemsSource = personPatronymices;
+                Spinner.Visibility = Visibility.Collapsed;
+                LockInterface.Visibility = Visibility.Collapsed;
             }));
         }
 
-
-        private void ShowLoadCSV(object sender, RoutedEventArgs e)
-        {
-            ListViewSettings.UnselectAll();
-            Settings.Visibility = Visibility.Collapsed;
-            LoadCSV.Visibility = Visibility.Visible;
-            CreateExcel.Visibility = Visibility.Collapsed;
-            DataGridView.Visibility = Visibility.Collapsed;
-        }
-
-        private void ShowSettings(object sender, RoutedEventArgs e)
-        {
-            ListView.UnselectAll();
-            Settings.Visibility = Visibility.Visible;
-            LoadCSV.Visibility = Visibility.Collapsed;
-            CreateExcel.Visibility = Visibility.Collapsed;
-            DataGridView.Visibility = Visibility.Collapsed;
-        }
-
-        private void ButtonLoadCSV_Click(object sender, RoutedEventArgs e)
+       /* private void ButtonLoadCSV_Click(object sender, RoutedEventArgs e) ТУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУУТ
         {
             ProgressBar.Visibility = Visibility.Visible;
             ProgressBar.Value = 0;
@@ -147,22 +109,14 @@ namespace ConvertCSV
             {
                 Change_LabelInfo("File upload error !", "#FFDE5454");
             }
-        }
+        }  */
 
-        private async void ShowDataGridView(object sender, RoutedEventArgs e)
+        private async void ShowDataGridView1(/*object sender, RoutedEventArgs e*/)
         {
             try
             {
-                LockInterface.Visibility = Visibility.Visible;
-                ListViewSettings.UnselectAll();
-                Settings.Visibility = Visibility.Collapsed;
-                LoadCSV.Visibility = Visibility.Collapsed;
-                CreateExcel.Visibility = Visibility.Collapsed;
-                Spinner.Visibility = Visibility.Visible;
                 await Task.Run(() => LoadDataGrid());
-                Spinner.Visibility = Visibility.Collapsed;
-                DataGridView.Visibility = Visibility.Visible;
-                LockInterface.Visibility = Visibility.Collapsed;
+               
             }
             catch
             {
@@ -170,18 +124,25 @@ namespace ConvertCSV
             }
         }
         
-        private void LoadDataGrid()//Вызов асинхронного метода LoadDataGrid, для загрузки данных в таблицу данных
+        private async void LoadDataGrid()//Вызов асинхронного метода LoadDataGrid, для загрузки данных в таблицу данных
         {
-            List<Person> persons =  DBRepository.GetPerson().Result.ToList();
-            List<ModelForDataGrid> modelesForDataGrid = new List<ModelForDataGrid>();
+            await Application.Current.Dispatcher.BeginInvoke(new ThreadStart(delegate
+            {
+                LockInterface.Visibility = Visibility.Visible;
+                Spinner.Visibility = Visibility.Visible;
+            }));
+            List<Person> persons = (await DBRepository.GetPerson()).ToList();
+            List<RecordViewModel> modelesForDataGrid = new List<RecordViewModel>();
             foreach (Person person in persons)
             {
-                City city = DBRepository.GetCity(person.CityId).Result;
-                modelesForDataGrid.Add(new ModelForDataGrid(person.Date, person.Name, person.Surname, person.Patronymic, city.Name, DBRepository.GetCountry(city.CountryId).Result.Name));
+                City city = await DBRepository.GetCity(person.CityId);
+                modelesForDataGrid.Add(new RecordViewModel(person.Date, person.Name, person.Surname, person.Patronymic, city.Name, (await DBRepository.GetCountry(city.CountryId)).Name));
             }
-            Application.Current.Dispatcher.BeginInvoke(new ThreadStart(delegate
+            await Application.Current.Dispatcher.BeginInvoke(new ThreadStart(delegate
             {
                 DataGrid.ItemsSource = modelesForDataGrid;
+                Spinner.Visibility = Visibility.Collapsed;
+                LockInterface.Visibility = Visibility.Collapsed;
             }));
         }
 
@@ -362,11 +323,11 @@ namespace ConvertCSV
                 persons = await Task.Run(() => SelectionPerson(personName, personSurname, personPatronymic, cityName, countryName, dateFromSearch, dateToSearch));
                 LockInterface.Visibility = Visibility.Collapsed;
                 Spinner.Visibility = Visibility.Collapsed;
-                List<ModelForDataGrid> modelesForDataGrid = new List<ModelForDataGrid>();
+                List<RecordViewModel> modelesForDataGrid = new List<RecordViewModel>();
                 foreach (Person person in persons)
                 {
                     City city = await DBRepository.GetCity(person.CityId);
-                    modelesForDataGrid.Add(new ModelForDataGrid(person.Date, person.Name, person.Surname, person.Patronymic, city.Name, (await DBRepository.GetCountry(city.CountryId)).Name));
+                    modelesForDataGrid.Add(new RecordViewModel(person.Date, person.Name, person.Surname, person.Patronymic, city.Name, (await DBRepository.GetCountry(city.CountryId)).Name));
                 }
                 DataGridPreview.ItemsSource = modelesForDataGrid;
             }
@@ -381,7 +342,6 @@ namespace ConvertCSV
         {
             try
             {
-                ListView.UnselectAll();
                 LockInterface.Visibility = Visibility.Visible;
                 Spinner.Visibility = Visibility.Visible;
                 await Task.Run(() => ClearDB());
@@ -420,5 +380,39 @@ namespace ConvertCSV
                 context.SaveChanges();
             }
         }
+
+        private void GridMenu_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            TabControl.MinWidth = this.Width;
+            TabControl.MinHeight = this.Height;
+        }
+
+        private async void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+         {
+
+             if (TabControl.SelectedIndex == 1)
+             {
+                 try
+                 {
+                     await Task.Run(() => LoadDataAsync());
+                 }
+                 catch
+                 {
+                     Change_LabelInfo("Page load error!", "#FFDE5454");
+                 }
+             }
+             else if(TabControl.SelectedIndex == 2)
+             {
+                 try
+                 {
+                     await Task.Run(() => LoadDataGrid());
+
+                 }
+                 catch
+                 {
+                     Change_LabelInfo("Error loading table !", "#FFDE5454");
+                 }
+             }
+         }
     }
 }

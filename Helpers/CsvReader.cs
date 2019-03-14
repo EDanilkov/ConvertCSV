@@ -11,15 +11,18 @@ using System.Windows.Controls;
 
 namespace ConvertCSV.Helpers
 {
+    delegate void SetProgressBarMax(int max);
+    delegate void AddProgressBar();
+    
     class CsvReader
     {
-        public static void LoadCSV(string Path, ProgressBar progressBar)
+        public static void LoadCSV(string Path, SetProgressBarMax SetProgressBarMax, AddProgressBar AddProgressBar)//передавать делегат вместо progressbar
         {
             DBRepository dBRepository = new DBRepository();
             string[] temp = File.ReadAllLines(Path, Encoding.Default);
             Application.Current.Dispatcher.BeginInvoke(new ThreadStart(delegate
             {
-                progressBar.Maximum = temp.Count();
+                SetProgressBarMax(temp.Count());
             }));
             List<Country> countries =  dBRepository.GetCountry().Result;
             List<City> cities =  dBRepository.GetCity().Result;
@@ -27,7 +30,7 @@ namespace ConvertCSV.Helpers
             {
                  Application.Current.Dispatcher.BeginInvoke(new ThreadStart(delegate
                 {
-                    progressBar.Value++;
+                    AddProgressBar();
                 }));
                 string[] words = s.Split(';');
                 if (!( dBRepository.GetCountry().Result.Any(c => string.Equals(c.Name, words[5]))))

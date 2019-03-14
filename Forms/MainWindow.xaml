@@ -5,188 +5,441 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:ConvertCSV"
+        xmlns:vm="clr-namespace:ConvertCSV.ViewModels"
         xmlns:wpfTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
         mc:Ignorable="d"
         Title="ConverterCSV" Height="600" Width="1200" Foreground="White">
 
-    <Window.Resources>
-        <Storyboard x:Key="OpenMenu">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="GridMenu">
-                <EasingDoubleKeyFrame KeyTime="0" Value="70"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="200"/>
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-        <Storyboard x:Key="CloseMenu">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="GridMenu">
-                <EasingDoubleKeyFrame KeyTime="0" Value="200"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="70"/>
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-    </Window.Resources>
-    <Window.Triggers>
-        <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="ButtonOpenMenu">
-            <BeginStoryboard Storyboard="{StaticResource OpenMenu}"/>
-        </EventTrigger>
-        <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="ButtonCloseMenu">
-            <BeginStoryboard Storyboard="{StaticResource CloseMenu}"/>
-        </EventTrigger>
-    </Window.Triggers>
-
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
 
     <Grid Background="#FFDEDEDE">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="AUTO" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition 
+                Width="*">
+            </ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="545*"></RowDefinition>
-            <RowDefinition Height="20*"></RowDefinition>
+            <RowDefinition 
+                Height="545*">
+            </RowDefinition>
+            <RowDefinition 
+                Height="20*">
+            </RowDefinition>
         </Grid.RowDefinitions>
-        <Grid Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" x:Name="GridMenu" Width="70" HorizontalAlignment="Left" Background="#FF31577E">
-            <Grid.Effect>
-                <DropShadowEffect BlurRadius="2" ShadowDepth="1" Color="#FFAEAEAE"/>
-            </Grid.Effect>
-            <StackPanel>
-                <Button x:Name="ButtonOpenMenu" Height="60" Width="60" Margin="5" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" Click="ButtonOpenMenu_Click">
-                    <materialDesign:PackIcon Kind="Menu" Width="25" Height="25"/>
-                </Button>
-                <Button x:Name="ButtonCloseMenu" Visibility="Collapsed" Height="60" Width="60" Margin="5" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="White" Click="ButtonCloseMenu_Click">
-                    <materialDesign:PackIcon Kind="ArrowLeft" Width="25" Height="25"/>
-                </Button>
-                <ListView x:Name="ListView" Foreground="White" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                    <ListViewItem Height="60" Selected="ShowLoadCSV">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="ViewDashboard" Height="25" Width="25" Margin="10"/>
-                            <TextBlock Text="Load CVS" VerticalAlignment="Center" Margin="20 10"/>
+        <Grid 
+            SizeChanged="GridMenu_SizeChanged" 
+            Grid.Column="0" 
+            Grid.Row="0"
+            x:Name="GridMenu"
+            HorizontalAlignment="Left"
+            Background="#FF31577E">
+            <dragablz:TabablzControl 
+                Width="1200"  
+                Name="TabControl" 
+                SelectionChanged="TabControl_SelectionChanged"
+                Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+                <dragablz:TabablzControl.InterTabController>
+                    <dragablz:InterTabController/>
+                </dragablz:TabablzControl.InterTabController>
+                <TabItem 
+                    x:Name="ShowLoadCSV" 
+                    Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+                    <TabItem.Header >
+                        <TextBlock 
+                            Margin="3"
+                            Text="Load CVS">
+                        </TextBlock>
+                    </TabItem.Header>
+                    <TabItem.Content>
+                        <StackPanel 
+                            Orientation="Vertical">
+                            <TextBlock 
+                                FontSize="18"
+                                Margin="20 10"
+                                Foreground="Black"
+                                Text="Choose the path to the file:"/>
+                            <StackPanel
+                                Orientation="Horizontal">
+                                <TextBox 
+                                    Text="{Binding Path}"
+                                    Name="CSVPath"
+                                    IsReadOnly="True" 
+                                    Foreground="Black"
+                                    Margin="20 10"
+                                    Width="450"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Background="White" />
+                                <Button 
+                                    Command="{Binding ShowCSVPath}"
+                                    Width="100"
+                                    Height="30" >
+                                    <TextBlock 
+                                        Text="Browse..."/>
+                                </Button>
+                                <Button 
+                                    Name="ButtonLoadCSV"
+                                    Command="{Binding ClickAdd}"
+                                    Margin="10" 
+                                    Width="100"
+                                    Height="30" >
+                                    <TextBlock 
+                                        Text="Load"/>
+                                </Button>
+                            </StackPanel>
                         </StackPanel>
-                    </ListViewItem>
-                    <ListViewItem Height="60" Selected="ShowCreateExcel">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Pencil" Height="25" Width="25" Margin="10"/>
-                            <TextBlock Text="Create File" VerticalAlignment="Center" Margin="20 10"/>
-                        </StackPanel>
-                    </ListViewItem>
-                    <ListViewItem Height="60" Selected="ShowDataGridView">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Table" Height="25" Width="25" Margin="10"/>
-                            <TextBlock Text="Show Data Table" VerticalAlignment="Center"  Margin="20 10"/>
-                        </StackPanel>
-                    </ListViewItem>
-                </ListView>
-            </StackPanel>
-            <ListView x:Name="ListViewSettings" VerticalAlignment="Bottom" Foreground="White" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                <ListViewItem VerticalAlignment="Bottom" Height="60" Selected="ShowSettings">
-                    <StackPanel Orientation="Horizontal">
-                        <materialDesign:PackIcon Kind="Settings" Height="25" Width="25" Margin="10"/>
-                        <TextBlock Text="Settings"  VerticalAlignment="Center"  Margin="20 10"/>
-                    </StackPanel>
-                </ListViewItem>
-            </ListView>
-        </Grid>
+                    </TabItem.Content>
+                </TabItem>
+                <TabItem 
+                    x:Name="ShowCreateExcel">
+                    <TabItem.Header>
+                        <TextBlock
+                            Margin="3"
+                            Text="Create File">
+                        </TextBlock>
+                    </TabItem.Header>
+                    <TabItem.Content>
+                        <StackPanel>
+                            <StackPanel 
+                                Orientation="Vertical">
+                                <TextBlock 
+                                    FontSize="18" 
+                                    Margin="20 10 0 0" 
+                                    HorizontalAlignment="Left" 
+                                    Foreground="Black" 
+                                    Text="Select collation" />
+                                <StackPanel 
+                                    Orientation="Horizontal">
+                                    <StackPanel 
+                                        Orientation="Vertical" 
+                                        Width="300"  
+                                        VerticalAlignment="Top" 
+                                        HorizontalAlignment="Left">
+                                        <StackPanel 
+                                            Orientation="Vertical" 
+                                            Margin="20 10 0 10">
+                                            <StackPanel 
+                                                Orientation="Vertical">
+                                                <TextBlock 
+                                                    Text="Name: " 
+                                                    FontSize="18" 
+                                                    VerticalAlignment="Center" 
+                                                    Foreground="Black" />
+                                                <wpfTool:CheckComboBox 
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Top" 
+                                                    ItemSelectionChanged ="CheckBoxCountry_ItemSelectionChanged"
+                                                    Margin="0 0 0 5" 
+                                                    MaxDropDownHeight ="60"
+                                                    Width="200" 
+                                                    Height="30"
+                                                    Name="CheckBoxName"/>
+                                                <TextBlock 
+                                                    Text="Surname: "
+                                                    FontSize="18"
+                                                    VerticalAlignment="Center" 
+                                                    Foreground="Black" />
+                                                <wpfTool:CheckComboBox 
+                                                    HorizontalAlignment="Left" 
+                                                    VerticalAlignment="Top" 
+                                                    ItemSelectionChanged ="CheckBoxCountry_ItemSelectionChanged"  
+                                                    Margin="0 0 0 5" 
+                                                    MaxDropDownHeight ="60"
+                                                    Width="200" 
+                                                    Height="30"
+                                                    Name="CheckBoxSurname"/>
+                                                <TextBlock 
+                                                    Text="Patronymic: "
+                                                    FontSize="18" 
+                                                    VerticalAlignment="Center"
+                                                    Foreground="Black" />
+                                                <wpfTool:CheckComboBox
+                                                    HorizontalAlignment="Left"
+                                                    Margin="0 0 0 5"
+                                                    VerticalAlignment="Top" 
+                                                    ItemSelectionChanged ="CheckBoxCountry_ItemSelectionChanged" 
+                                                    MaxDropDownHeight ="60" 
+                                                    Width="200" 
+                                                    Height="30" 
+                                                    Name="CheckBoxPatronymic"/>
+                                                <TextBlock 
+                                                    Text="Country: " 
+                                                    FontSize="18"
+                                                    VerticalAlignment="Center" 
+                                                    Foreground="Black" />
+                                                <wpfTool:CheckComboBox 
+                                                    HorizontalAlignment="Left"
+                                                    Margin="0 0 0 5" 
+                                                    VerticalAlignment="Top"
+                                                    ItemSelectionChanged ="CheckBoxCountry_ItemSelectionChanged" 
+                                                    MaxDropDownHeight ="60" 
+                                                    Width="200" 
+                                                    Height="30"
+                                                    Name="CheckBoxCountry"/>
+                                                <TextBlock 
+                                                    Text="City: "
+                                                    FontSize="18"
+                                                    VerticalAlignment="Center"
+                                                    Foreground="Black" />
+                                                <wpfTool:CheckComboBox
+                                                    HorizontalAlignment="Left" 
+                                                    Margin="0 0 0 5" 
+                                                    VerticalAlignment="Top"
+                                                    IsEnabled="False" 
+                                                    MaxDropDownHeight ="60"
+                                                    Width="200" 
+                                                    Height="30"
+                                                    Name="CheckBoxCity"/>
+                                            </StackPanel>
+                                        </StackPanel>
 
-        <Grid Name="LoadCSV" Grid.Column="1" Grid.Row="0" Visibility="Collapsed">
-            <StackPanel Orientation="Vertical">
-                <TextBlock FontSize="18" Margin="20 10" Foreground="Black" Text="Choose the path to the file:"/>
-                <StackPanel Orientation="Horizontal">
-                    <TextBox Name="CSVPath" IsReadOnly="True" Foreground="Black" Margin="20 10" Width="450" HorizontalAlignment="Left" VerticalAlignment="Top" Background="White" />
-                    <Button Click="ShowCSVPath_Click" Width="100" Height="30" >
-                        <TextBlock Text="Browse..."/>
-                    </Button>
-                    <Button Name="ButtonLoadCSV" Click="ButtonLoadCSV_Click" IsEnabled="False" Margin="10" Width="100" Height="30" >
-                        <TextBlock Text="Load"/>
-                    </Button>
-                </StackPanel>
-            </StackPanel>
-        </Grid>
-
-        <StackPanel Name="LockInterface" Visibility="Collapsed" Background="Black" Opacity="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan = "2"/>
-        <fa:ImageAwesome Name="Spinner" Foreground="#FF31577E" Visibility="Collapsed" Grid.Column="1" SpinDuration="1.5" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="0" Icon="Spinner" Spin="True" Height="100" Width="100"  />
-
-
-        <Grid Name="CreateExcel"  Grid.Column="1" Grid.Row="0" Visibility="Visible">
-
-            <StackPanel Orientation="Vertical">
-                <TextBlock FontSize="18" Margin="20 10 0 0" HorizontalAlignment="Left" Foreground="Black" Text="Select collation" />
-
-                <StackPanel Orientation="Horizontal">
-                    <StackPanel Orientation="Vertical" Width="300"  VerticalAlignment="Top" HorizontalAlignment="Left">
-                        <StackPanel Orientation="Vertical" Margin="20 10 0 10">
-                            <StackPanel  Orientation="Vertical">
-                                <TextBlock Text="Name: " FontSize="18" VerticalAlignment="Center" Foreground="Black" />
-                                <wpfTool:CheckComboBox HorizontalAlignment="Left" VerticalAlignment="Top" ItemSelectionChanged ="CheckBoxCountry_ItemSelectionChanged" Margin="0 0 0 5" MaxDropDownHeight ="60" Width="200" Height="30" Name="CheckBoxName"/>
-                                <TextBlock Text="Surname: " FontSize="18" VerticalAlignment="Center" Foreground="Black" />
-                                <wpfTool:CheckComboBox HorizontalAlignment="Left" VerticalAlignment="Top" ItemSelectionChanged ="CheckBoxCountry_ItemSelectionChanged"   Margin="0 0 0 5" MaxDropDownHeight ="60" Width="200" Height="30" Name="CheckBoxSurname"/>
-                                <TextBlock Text="Patronymic: " FontSize="18" VerticalAlignment="Center" Foreground="Black" />
-                                <wpfTool:CheckComboBox HorizontalAlignment="Left" Margin="0 0 0 5" VerticalAlignment="Top" ItemSelectionChanged ="CheckBoxCountry_ItemSelectionChanged" MaxDropDownHeight ="60" Width="200" Height="30" Name="CheckBoxPatronymic"/>
-                                <TextBlock Text="Country: " FontSize="18" VerticalAlignment="Center" Foreground="Black" />
-                                <wpfTool:CheckComboBox HorizontalAlignment="Left" Margin="0 0 0 5" VerticalAlignment="Top" ItemSelectionChanged ="CheckBoxCountry_ItemSelectionChanged" MaxDropDownHeight ="60" Width="200" Height="30" Name="CheckBoxCountry"/>
-                                <TextBlock Text="City: "  FontSize="18" VerticalAlignment="Center" Foreground="Black" />
-                                <wpfTool:CheckComboBox HorizontalAlignment="Left" Margin="0 0 0 5" VerticalAlignment="Top" IsEnabled="False" MaxDropDownHeight ="60" Width="200" Height="30" Name="CheckBoxCity"/>
+                                    </StackPanel>
+                                    <StackPanel 
+                                        Orientation="Vertical">
+                                        <DataGrid
+                                            Margin="10 10 0 0"
+                                            IsReadOnly="True"
+                                            MaxHeight="300"
+                                            Name="DataGridPreview"
+                                            Foreground="Black" 
+                                            AutoGenerateColumns="False"
+                                            HorizontalGridLinesBrush="DarkGray">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn 
+                                                    Header="Date" 
+                                                    Binding="{Binding Path=Date}"
+                                                    MinWidth="90" />
+                                                <DataGridTextColumn 
+                                                    Header="Name" 
+                                                    Binding="{Binding Path=Name}" 
+                                                    MinWidth="80" />
+                                                <DataGridTextColumn 
+                                                    Header="Surname" 
+                                                    Binding="{Binding Path=Surname}" 
+                                                    MinWidth="100" />
+                                                <DataGridTextColumn 
+                                                    Header="Patronymic" 
+                                                    Binding="{Binding Path=Patronymic}" 
+                                                    MinWidth="100" />
+                                                <DataGridTextColumn 
+                                                    Header="City" 
+                                                    Binding="{Binding Path=CityName}" 
+                                                    MinWidth="120" />
+                                                <DataGridTextColumn 
+                                                    Header="Country" 
+                                                    Binding="{Binding Path=CountryName}"
+                                                    MinWidth="120" />
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel 
+                                    Orientation="Vertical" 
+                                    Width="500" 
+                                    Height="150" 
+                                    HorizontalAlignment="Left"
+                                    Margin="20 10 0 10">
+                                    <StackPanel 
+                                        Orientation="Horizontal">
+                                        <TextBlock 
+                                            Width="80" 
+                                            Text="From date:"
+                                            FontSize="16" 
+                                            VerticalAlignment="Bottom"
+                                            Foreground="Black"/>
+                                        <DatePicker
+                                            Name="DateFromSearch"
+                                            Width="400"
+                                            SelectedDateChanged="DatePicker_SelectedDateFromChanged" 
+                                            HorizontalAlignment="Right" 
+                                            Margin="5"
+                                            Foreground="Black" 
+                                            Height="25" 
+                                            VerticalAlignment="Center" 
+                                            SelectedDateFormat="Short" />
+                                    </StackPanel>
+                                    <StackPanel 
+                                        Margin="0 20 0 0" 
+                                        Orientation="Horizontal">
+                                        <TextBlock 
+                                            Width="80" 
+                                            Text="To date:"
+                                            FontSize="16" 
+                                            VerticalAlignment="Bottom"
+                                            Foreground="Black"/>
+                                        <DatePicker
+                                            x:Name="DateToSearch" 
+                                            Width="400"
+                                            SelectedDateChanged="DatePicker_SelectedDateToChanged" 
+                                            HorizontalAlignment="Right"
+                                            Margin="5"
+                                            Foreground="Black" 
+                                            Height="25" 
+                                            VerticalAlignment="Center"
+                                            SelectedDateFormat="Short" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel 
+                                Orientation="Horizontal"
+                                VerticalAlignment="Bottom" 
+                                HorizontalAlignment="Right">
+                                <Button
+                                    Click="ButtonShowDataGridPreview_Click" 
+                                    Margin="15" 
+                                    Width="100" 
+                                    Height="30" >
+                                    <TextBlock 
+                                        Text="View"/>
+                                </Button>
+                                <Button 
+                                    Click="ButtonSaveExcel_Click" 
+                                    Margin="15" 
+                                    Width="100"
+                                    Height="30" >
+                                    <TextBlock 
+                                        Text="Save"/>
+                                </Button>
                             </StackPanel>
                         </StackPanel>
 
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical">
-                        <DataGrid Margin="10 10 0 0" IsReadOnly="True" MaxHeight="300" Name="DataGridPreview" Foreground="Black" AutoGenerateColumns="False" HorizontalGridLinesBrush="DarkGray">
+                    </TabItem.Content>
+                </TabItem>
+                <TabItem 
+                    x:Name="ShowDataGridView">
+                    <TabItem.Header>
+                        <TextBlock 
+                            Margin="3" 
+                            Text="DataGrid">
+                        </TextBlock>
+                    </TabItem.Header>
+                    <TabItem.Content>
+                        <DataGrid 
+                            IsReadOnly="True"
+                            Name="DataGrid"
+                            Foreground="Black" 
+                            AutoGenerateColumns="False"
+                            HorizontalGridLinesBrush="DarkGray"
+                            RowBackground="LightGray" 
+                            AlternatingRowBackground="White">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Date" Binding="{Binding Path=Date}" MinWidth="90" />
-                                <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}" MinWidth="80" />
-                                <DataGridTextColumn Header="Surname" Binding="{Binding Path=Surname}" MinWidth="100" />
-                                <DataGridTextColumn Header="Patronymic" Binding="{Binding Path=Patronymic}" MinWidth="100" />
-                                <DataGridTextColumn Header="City" Binding="{Binding Path=CityName}" MinWidth="120" />
-                                <DataGridTextColumn Header="Country" Binding="{Binding Path=CountryName}" MinWidth="120" />
+                                <DataGridTextColumn 
+                                    Header="Date" 
+                                    Binding="{Binding Path=Date}"
+                                    MinWidth="80" />
+                                <DataGridTextColumn 
+                                    Header="Name"
+                                    Binding="{Binding Path=Name}" 
+                                    MinWidth="80" />
+                                <DataGridTextColumn 
+                                    Header="Surname" 
+                                    Binding="{Binding Path=Surname}"
+                                    MinWidth="100" />
+                                <DataGridTextColumn
+                                    Header="Patronymic" 
+                                    Binding="{Binding Path=Patronymic}"
+                                    MinWidth="100" />
+                                <DataGridTextColumn 
+                                    Header="City"
+                                    Binding="{Binding Path=CityName}"
+                                    MinWidth="120" />
+                                <DataGridTextColumn
+                                    Header="Country" 
+                                    Binding="{Binding Path=CountryName}" 
+                                    MinWidth="120" />
                             </DataGrid.Columns>
                         </DataGrid>
-                    </StackPanel>
-                </StackPanel>
-                <StackPanel Orientation="Vertical" Width="500" Height="150" HorizontalAlignment="Left" Margin="20 10 0 10">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Width="80" Text="From date:" FontSize="16" VerticalAlignment="Bottom" Foreground="Black"/>
-                        <DatePicker Name="DateFromSearch" Width="400" SelectedDateChanged="DatePicker_SelectedDateFromChanged" HorizontalAlignment="Right" Margin="5" Foreground="Black" Height="25" VerticalAlignment="Center" SelectedDateFormat="Short" />
-                    </StackPanel>
-                    <StackPanel Margin="0 20 0 0" Orientation="Horizontal">
-                        <TextBlock Width="80"  Text="To date:" FontSize="16" VerticalAlignment="Bottom" Foreground="Black"/>
-                        <DatePicker x:Name="DateToSearch" Width="400" SelectedDateChanged="DatePicker_SelectedDateToChanged" HorizontalAlignment="Right" Margin="5" Foreground="Black" Height="25" VerticalAlignment="Center" SelectedDateFormat="Short" />
-                    </StackPanel>
-                </StackPanel>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
-                <Button Click="ButtonShowDataGridPreview_Click" Margin="15" Width="100" Height="30" >
-                    <TextBlock Text="View"/>
-                </Button>
-                <Button Click="ButtonSaveExcel_Click" Margin="15" Width="100" Height="30" >
-                    <TextBlock Text="Save"/>
-                </Button>
-            </StackPanel>
+                    </TabItem.Content>
+                </TabItem>
+                <TabItem 
+                    x:Name="ShowSettings">
+                    <TabItem.Header>
+                        <TextBlock 
+                            Margin="3" 
+                            Text="Settings">
+                        </TextBlock>
+                    </TabItem.Header>
+                    <TabItem.Content>
+                        <StackPanel 
+                            Orientation="Vertical">
+                            <TextBlock 
+                                HorizontalAlignment="Center" 
+                                Text="Settings"
+                                FontSize="24" 
+                                Foreground="Black"/>
+                            <StackPanel
+                                Margin="10" 
+                                Orientation="Horizontal">
+                                <TextBlock 
+                                    VerticalAlignment="Center" 
+                                    Foreground="Black"
+                                    FontSize="18" 
+                                    Text="To clear the database"/>
+                                <Button 
+                                    Margin="10 0 0 0 " 
+                                    Click="ButtonClearDB_Click">
+                                    <TextBlock 
+                                        Text="Apply"/>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </TabItem.Content>
+                </TabItem>
+            </dragablz:TabablzControl>
         </Grid>
 
-        <Grid Name="Settings" Grid.Column="1" Grid.Row="0" Visibility="Collapsed">
-            <StackPanel Orientation="Vertical">
-                <TextBlock HorizontalAlignment="Center" Text="Settings" FontSize="24" Foreground="Black"/>
-                <StackPanel Margin="10" Orientation="Horizontal">
-                    <TextBlock VerticalAlignment="Center" Foreground="Black" FontSize="18" Text="To clear the database"/>
-                    <Button Margin="10 0 0 0 " Click="ButtonClearDB_Click">
-                        <TextBlock Text="Apply"/>
-                    </Button>
-                </StackPanel>
-            </StackPanel>
-        </Grid>
 
-        <Grid Name="DataGridView" Grid.Column="1" Grid.Row="0"  Visibility="Collapsed">
-            <DataGrid IsReadOnly="True" Name="DataGrid" Foreground="Black" AutoGenerateColumns="False" HorizontalGridLinesBrush="DarkGray" RowBackground="LightGray" AlternatingRowBackground="White">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Date" Binding="{Binding Path=Date}" MinWidth="80" />
-                    <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}" MinWidth="80" />
-                    <DataGridTextColumn Header="Surname" Binding="{Binding Path=Surname}" MinWidth="100" />
-                    <DataGridTextColumn Header="Patronymic" Binding="{Binding Path=Patronymic}" MinWidth="100" />
-                    <DataGridTextColumn Header="City" Binding="{Binding Path=CityName}" MinWidth="120" />
-                    <DataGridTextColumn Header="Country" Binding="{Binding Path=CountryName}" MinWidth="120" />
-                </DataGrid.Columns>
-            </DataGrid>
-        </Grid>
+        <StackPanel 
+            Name="LockInterface"
+            Visibility="Collapsed" 
+            Background="Black" 
+            Opacity="0" 
+            Grid.Column="0"
+            Grid.RowSpan="2" 
+            Grid.ColumnSpan = "2"/>
+        <fa:ImageAwesome
+            Name="Spinner" 
+            Foreground="#FF31577E" 
+            Visibility="Collapsed"
+            Grid.Column="1" 
+            SpinDuration="1.5"
+            VerticalAlignment="Center" 
+            HorizontalAlignment="Center"
+            Grid.Row="0" 
+            Icon="Spinner" 
+            Spin="True" 
+            Height="100"
+            Width="100"  />
 
-        <TextBlock  Text="Готово !" Padding="5 0 0 0" FontSize="16" Background="#FF76D353" Visibility="Collapsed" VerticalAlignment="Bottom" Name="LabelInfo" Grid.Column="1" Grid.Row="1" Height="22" />
-        <ProgressBar Visibility="Visible" VerticalAlignment="Bottom" Name="ProgressBar" Grid.Column="1" Grid.Row="1" Minimum="0" Maximum="100" Value="0" Height="22" Background="#FF84A2C3" Foreground="#FF6188B0"/>
-    </Grid>
+
+
+        
+        <ProgressBar 
+            Value="{Binding ProgressBarValue}"
+            Visibility="{Binding ProgressBarVisibility}" 
+            VerticalAlignment="Bottom" 
+            Name="ProgressBar" 
+            Grid.Column="0" 
+            Grid.Row="1" 
+            Minimum="0" 
+            Maximum="{Binding ProgressBarMaximum}" 
+            Height="22"
+            Background="#FF84A2C3"
+            Foreground="#FF6188B0"/>
+        <TextBlock 
+            Name="LabelInfo" 
+            Text="{Binding LabelInfoText}" 
+            Padding="5 0 0 0" 
+            FontSize="16" 
+            Background="{Binding LabelInfoBackground}"
+            Visibility= "{Binding LabelInfoVisibility}"
+            VerticalAlignment="Bottom"
+            Grid.Column="1" 
+            Grid.Row="1"
+            Height="20" />
+    </Grid> 
 </Window>

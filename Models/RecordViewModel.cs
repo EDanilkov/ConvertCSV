@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConvertCSV
 {
-    class ModelForDataGrid
+    class RecordViewModel
     {
         public DateTime Date { get; set; }
         public string Name { get; set; }
@@ -15,7 +15,7 @@ namespace ConvertCSV
         public string CityName { get; set; }
         public string CountryName { get; set; }
 
-        public ModelForDataGrid(DateTime date, string name, string surname, string patronymic, string cityName, string countryName)
+        public RecordViewModel(DateTime date, string name, string surname, string patronymic, string cityName, string countryName)
         {
             Date = date;
             Name = name;
